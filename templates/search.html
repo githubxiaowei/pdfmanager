@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{name}}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{name}}</h1>
+    <br>
+    <h4>{{form_in.comment}}</h4>
+</div>
+
+<div class="col-md-8">
+    {{ wtf.quick_form(form_in) }}
+</div>
+<br>
+<br>
+<div class="col-md-8">
+<ul class="list-group">
+    {% for item in results %}
+    <li class="list-group-item">
+        <div class="file_info">
+            <div class="filename">标 题：<a href="{{url_for('.download', id=item['_id'])}}">{{ item['file_name'] }}</a></div>
+            <div class="author">作 者：{{ item['author'] }}</div>
+             <div class="year">年 份：{{ item['year'] }}</div>
+             <div class="filesize">大 小：{{ item['file_size'] }}Kb</div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+</div>
+{% endblock %}

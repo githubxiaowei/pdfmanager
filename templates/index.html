@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{name}}{% endblock %}
+
+{% block page_content %}
+<table class="table table-striped">
+<tr>
+<td>API接口</td><td>功能描述</td>
+</tr>
+{% for item in items%}
+<tr>
+<td><a href="api/{{item[0]}}">{{item[0]}}</a></td>
+<td>{{item[1]}}</td>
+</tr>
+{%endfor%}
+</table>
+{% endblock %}
