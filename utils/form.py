@@ -1,5 +1,6 @@
 import re
 import hashlib
+import fitz
 from flask_wtf import FlaskForm
 from flask import flash
 from wtforms import StringField, SubmitField, TextAreaField, FileField
@@ -60,6 +61,7 @@ class UploadForm(FlaskForm):
         file_dict['file_size'] = len(file_bytes)//1024
         file_dict['data'] = file_bytes
         file_dict['hash_code'] = hashlib.md5(file_bytes).hexdigest()
+        file_dict['first_page'] = self._first_page(file_bytes)
         with MongoConnection('pdf') as conn:
             if len(list(conn.find({'hash_code':file_dict['hash_code']},{'_id':1}))) > 0:
                 flash('File exists!')
@@ -69,6 +71,13 @@ class UploadForm(FlaskForm):
                 flash('Upload success!  File size: {:.3f} MB'.format(
                 len(file_bytes)/(1024*1024)
             ))
+    
+    def _first_page(self, file_bytes):
+        with fitz.Document(stream=file_bytes, filetype='pdf') as doc:
+            page = doc.load_page(0)
+            pix = page.get_pixmap()
+            return pix.tobytes()
+
 
     def run(self, ):
         try:

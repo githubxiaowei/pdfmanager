@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request,\
                   redirect,Response,session, url_for
 from utils import *
+from bson.objectid import ObjectId
 from flask_bootstrap import Bootstrap
 
 
@@ -73,6 +74,24 @@ def download(id):
         return render_template('404.html'), 404
 
     return Response(file_bytes, content_type='application/pdf')
+
+@app.route('/img/<id>',methods=['GET'])
+def first_page(id):
+    try:
+        with MongoConnection('pdf') as conn:
+            q = {
+                "_id":ObjectId(id)
+            }
+            p = {"first_page":1}
+            res = conn.find(q, p)
+            res = list(res)
+            file_bytes = res[0]['first_page']
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return render_template('404.html'), 404
+
+    return Response(file_bytes, content_type='image/png')
 
 
 if __name__ == '__main__':
